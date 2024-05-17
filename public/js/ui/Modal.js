@@ -1,47 +1,47 @@
-/**
- * Класс Modal отвечает за
- * управление всплывающими окнами.
- * В первую очередь это открытие или
- * закрытие имеющихся окон
- * */
 class Modal {
-  /**
-   * Устанавливает текущий элемент в свойство element
-   * Регистрирует обработчики событий с помощью Modal.registerEvents()
-   * Если переданный элемент не существует,
-   * необходимо выкинуть ошибку.
-   * */
-  constructor(element){
-
+  constructor(element) {
+    if (!element) {
+      throw new Error('Элемент не существует');
+    }
+    this.element = element;
+    this.registerEvents();
   }
 
-  /**
-   * При нажатии на элемент с data-dismiss="modal"
-   * должен закрыть текущее окно
-   * (с помощью метода Modal.onClose)
-   * */
   registerEvents() {
-
+    const dismissButtons = this.element.querySelectorAll('[data-dismiss="modal"]');
+    dismissButtons.forEach(button => {
+      button.addEventListener('click', this.onClose.bind(this));
+    });
   }
 
-  /**
-   * Срабатывает после нажатия на элементы, закрывающие окно.
-   * Закрывает текущее окно (Modal.close())
-   * */
   onClose(e) {
-
+    e.preventDefault();
+    this.close();
   }
-  /**
-   * Открывает окно: устанавливает CSS-свойство display
-   * со значением «block»
-   * */
+
   open() {
-
+    this.element.style.display = 'block';
   }
-  /**
-   * Закрывает окно: удаляет CSS-свойство display
-   * */
-  close(){
 
+  close() {
+    this.element.style.display = 'none';
   }
 }
+
+// Обработчики событий для элементов span, открывающих модальные окна
+const spans = {
+  register: document.querySelector('.menu-item_register'),
+  login: document.querySelector('.menu-item_login'),
+  logout: document.querySelector('.menu-item_logout'),
+  createAccount: document.querySelector('.create-account'),
+  // Добавьте другие элементы span здесь...
+};
+
+Object.keys(spans).forEach(spanKey => {
+  if (spans[spanKey]) {
+    spans[spanKey].addEventListener('click', (evt) => {
+      evt.preventDefault();
+      App.getModal(spanKey).open();
+    });
+  }
+});
